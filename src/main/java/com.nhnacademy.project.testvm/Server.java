@@ -1,66 +1,58 @@
 package com.nhnacademy.project.testvm;
 
-import java.io.DataInputStream;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    private final int port;
+    private ServerSocket socket;
+    private BufferedReader reader;
+    private PrintWriter writer;
+    private Socket clientSocket;
+    private StringBuilder readData = new StringBuilder();
 
-    public Server(int port) {
-        this.port = port;
+    @Parameter(names = {"port", "-l"})
+    int port;
+    @Parameter
+    String value;
+
+    public static void main(String... argv) {
+        Server main = new Server();
+        JCommander.newBuilder()
+            .addObject(main)
+            .build()
+            .parse(argv);
+        main.run();
+        main.start(main.port);
     }
 
-    public void start() throws IOException {
-        int k = Integer.MIN_VALUE;
-        boolean b = true;
-
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            while (b) {
-                k++;
-                b = k < Integer.MAX_VALUE;
-                try {
-                    Socket socket = serverSocket.accept();
-                    ClientSession client = new ClientSession(socket);
-                    client.start();
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
+    public void run() {
+        System.out.printf("%d", port);
     }
 
-    public static class ClientSession extends Thread {
-        private final Socket socket;
-        private final DataInputStream in;
+    public void start(int port) {
+        try {
+            socket = new ServerSocket(port);
+            clientSocket = socket.accept();
 
-        ClientSession(Socket socket) throws IOException {
-            this.socket = socket;
-            this.in = new DataInputStream(socket.getInputStream());
-        }
+            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            writer = new PrintWriter(clientSocket.getOutputStream());
 
-        @Override
-        public void run() {
-            connect();
-        }
-
-        private void connect() {
-            if (isConnect()) {
-                try {
-                    Thread sender = new Sender(this.socket);
-                    Thread receiver = new Receiver(this.socket);
-
-                    sender.start();
-                    receiver.start();
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
+            while (true) {
+                //!(readData = reader.readLine()).equals(null)
+                readData.append(reader.readLine());
+                System.out.println(readData);
+//                writer.println(readData);
+//                writer.flush();
             }
-        }
-
-        private boolean isConnect() {
-            return this.in != null;
+//            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
