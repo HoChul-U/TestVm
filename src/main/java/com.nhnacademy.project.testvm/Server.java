@@ -15,7 +15,8 @@ public class Server {
     private BufferedReader reader;
     private PrintWriter writer;
     private Socket clientSocket;
-    private StringBuilder readData = new StringBuilder();
+    private StringBuilder request = new StringBuilder();
+    DataParser dataParser;
 
     @Parameter(names = {"port", "-l"})
     int port;
@@ -39,7 +40,7 @@ public class Server {
     public void start(int port) {
         try {
             socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("192.168.71.79", port));
+            socket.bind(new InetSocketAddress("192.168.71.33", port));
             clientSocket = socket.accept();
 
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -47,13 +48,20 @@ public class Server {
             String l;
             while (!(l = reader.readLine()).isEmpty()) {
                 //!(l = reader.readLine()).equals(null)
-                readData.append(l);
+                request.append(l + "\n");
 //                writer.println(readData);
 //                writer.flush();
             }
-            System.out.println(readData.toString());
+            dataParser = new DataParser(request);
+            dataParser.dataParsing();
+
+            System.out.println(request.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+
 }
+
