@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -37,20 +38,20 @@ public class Server {
 
     public void start(int port) {
         try {
-            socket = new ServerSocket(port);
+            socket = new ServerSocket();
+            socket.bind(new InetSocketAddress("192.168.71.79", port));
             clientSocket = socket.accept();
 
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             writer = new PrintWriter(clientSocket.getOutputStream());
-
-            while (true) {
-                //!(readData = reader.readLine()).equals(null)
-                readData.append(reader.readLine());
-                System.out.println(readData);
+            String l;
+            while (!(l = reader.readLine()).isEmpty()) {
+                //!(l = reader.readLine()).equals(null)
+                readData.append(l);
 //                writer.println(readData);
 //                writer.flush();
             }
-//            clientSocket.close();
+            System.out.println(readData.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
