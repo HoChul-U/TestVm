@@ -34,13 +34,13 @@ public class Server {
     }
 
     public void run() {
-        System.out.printf("%d", port);
+        System.out.printf("%d\n", port);
     }
 
     public void start(int port) {
         try {
             socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("192.168.71.33", port));
+            socket.bind(new InetSocketAddress("192.168.71.73", port));
             clientSocket = socket.accept();
 
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
