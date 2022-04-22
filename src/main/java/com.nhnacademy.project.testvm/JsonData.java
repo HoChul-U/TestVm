@@ -1,15 +1,20 @@
 package com.nhnacademy.project.testvm;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import java.net.PortUnreachableException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JsonData {
 
-    private Map<String,String> args;
-    private Map<String,String> headers;
+    private Map<String,String> args = new HashMap<>();
+
+    private Map<String,String> headers = new HashMap<>();
 
     private String origin;
-    private String url;
+
+    private String url="{}";
 
     public void setArgs(Map<String, String> args) {
         this.args = args;

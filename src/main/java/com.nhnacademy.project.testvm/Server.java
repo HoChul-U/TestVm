@@ -43,7 +43,7 @@ public class Server {
     public void start(int port) {
         try {
             socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("192.168.71.21", port));
+            socket.bind(new InetSocketAddress("127.0.0.1", port));
             clientSocket = socket.accept();
             clientIp = String.valueOf(clientSocket.getInetAddress());
 
@@ -53,9 +53,7 @@ public class Server {
 
             String l;
             while (!(l = reader.readLine()).isEmpty()) {
-                //!(l = reader.readLine()).equals(null)
                 request.append(l + "\n");
-
             }
             dataParser = new DataParser(request, clientIp);
             String body = dataParser.makeBody();
