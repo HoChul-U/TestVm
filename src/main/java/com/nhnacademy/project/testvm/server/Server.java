@@ -2,14 +2,22 @@ package com.nhnacademy.project.testvm.server;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.fasterxml.jackson.databind.util.ByteBufferBackedOutputStream;
+import com.google.common.io.ByteStreams;
 import com.nhnacademy.project.testvm.parser.DataParser;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Server {
     private ServerSocket socket;
@@ -42,7 +50,7 @@ public class Server {
     public void start(int port) {
         try {
             socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("192.168.71.76", port));
+            socket.bind(new InetSocketAddress("127.0.0.1", port));
             clientSocket = socket.accept();
             clientIp = String.valueOf(clientSocket.getInetAddress());
 
@@ -50,6 +58,7 @@ public class Server {
             writer = new PrintWriter(clientSocket.getOutputStream());
 
 
+            byte[] bytes = clientSocket.getInputStream().readAllBytes();
             String l;
             while (!(l = reader.readLine()).isEmpty()) {
                 request.append(l + "\n");
