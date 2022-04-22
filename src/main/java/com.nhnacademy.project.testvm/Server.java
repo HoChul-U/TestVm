@@ -11,12 +11,11 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Server {
     private ServerSocket socket;
     private BufferedReader reader;
-    private DataOutputStream writer;
+    private PrintWriter writer;
     private Socket clientSocket;
     private StringBuilder request = new StringBuilder();
     private DataParser dataParser;
@@ -44,37 +43,28 @@ public class Server {
     public void start(int port) {
         try {
             socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("192.168.71.72", port));
+            socket.bind(new InetSocketAddress("192.168.71.21", port));
             clientSocket = socket.accept();
             clientIp = String.valueOf(clientSocket.getInetAddress());
 
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintStream printStream = new PrintStream(clientSocket.getOutputStream());
-            PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
-            writer = new DataOutputStream(clientSocket.getOutputStream());
+            writer = new PrintWriter(clientSocket.getOutputStream());
+
 
             String l;
             while (!(l = reader.readLine()).isEmpty()) {
                 //!(l = reader.readLine()).equals(null)
                 request.append(l + "\n");
-//                writer.println(readData);
-//                writer.flush();
+
             }
             dataParser = new DataParser(request, clientIp);
             String body = dataParser.makeBody();
             StringBuilder header = dataParser.dataParsing();
-//            writer.writeBytes(dataParser.dataParsing());
-            //Scanner sc = new Scanner(dataParser.dataParsing().toString());
-            System.out.println(header);
-            System.out.println(body);
 
-            printWriter.append(header);
-            printWriter.append(body);
-            printWriter.flush();
-            //writer.writeBytes(sc.nextLine());
-            //writer.flush();
+            writer.append(header);
+            writer.append(body);
+            writer.flush();
 
-            //System.out.println(request.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

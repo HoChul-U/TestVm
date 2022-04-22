@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class DataParser {
@@ -46,9 +47,19 @@ public class DataParser {
     String makeBody() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         body.setOrigin(this.clientIp.replace("/", ""));
+        body.getArgs().put("", "");
         jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)+System.lineSeparator();
         length = jsonString.getBytes().length;
 
+
+
         return jsonString;
     }
+
+    String checkArgsEmpty() {
+
+        return null;
+    }
+
+
 }
