@@ -22,8 +22,6 @@ public class Server {
 
     @Parameter(names = {"port", "-l"})
     int port;
-    @Parameter
-    String value;
 
     public static void main(String... argv) {
         Server main = new Server();
