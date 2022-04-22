@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 public class SecondDataParser {
     private int count = 0;
-    private int contentLength;
 
     private String url;
     private String jsonString;
@@ -21,6 +20,7 @@ public class SecondDataParser {
     private final String clientIp;
     private final Date date = new Date();
     private final JsonData body = new JsonData();
+    private final MakeResponse makeResponse = new MakeResponse();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("E, d ,M yyyy HH:mm:ss z");
     private final StringBuilder header = new StringBuilder();
     private final ParsingData parsingData = new ParsingData();
@@ -49,37 +49,23 @@ public class SecondDataParser {
             }
             body.putHeaders(line.split(":")[0], line.split(":")[1]);
         }
-        while(scanner.hasNextLine()){
+        while (scanner.hasNextLine()) {
             line = scanner.nextLine();
             System.out.println(line);
             body.setData(line);
             System.out.println(body.getData());
-            Map<String,String >map = objectMapper.readValue(line,Map.class);
+            Map<String, String> map = objectMapper.readValue(line, Map.class);
             body.setJson(map);
 
             System.out.println(map.toString());
-//            if(!line.isEmpty()){
-//
-//            }
         }
-        makeUrl();
-        makeBody();
-        makeHeader(dateString);
-
+        url = makeResponse.makeUrl(body.getHeaders().get("Host"), parsingData.getPath());
+        jsonString = makeResponse.makeBody(body, clientIp, url);
+        makeResponse.makeHeader(header, dateString, parsingData.getHttp(),
+            makeResponse.contentLength);
         return header;
     }
 
-    private void makeHeader(String dateString) {
-        header.append(parsingData.getHttp() + " 200 OK" + System.lineSeparator());
-        header.append("Content-Type: application/json" + System.lineSeparator());
-        header.append("Date: " + dateString + System.lineSeparator());
-        header.append("Content-length: " + contentLength + System.lineSeparator());
-        header.append("Connection: keep-alive" + System.lineSeparator());
-        header.append("Server: gunicorn/19.9.0" + System.lineSeparator());
-        header.append("Access-Control-Allow-Origin: *" + System.lineSeparator());
-        header.append("Access-Control-Allow-Credentials: true" + System.lineSeparator());
-        header.append(System.lineSeparator());
-    }
 
     private void checkParamList() {
         List<String> paramList = List.of(parsingData.getPath().split("\\?")[1].split("\\&"));
@@ -88,20 +74,6 @@ public class SecondDataParser {
             paramList.add(parsingData.getParam());
         }
         paramList.forEach(a -> body.putArgs(a.split("=")[0], a.split("=")[1]));
-    }
-
-
-    void makeUrl() {
-        url = "http://" + body.getHeaders().get("Host") + parsingData.getPath();
-        url = url.replace(" ", "");
-    }
-
-    void makeBody() throws JsonProcessingException {
-        body.setOrigin(this.clientIp.replace("/", ""));
-        body.setUrl(this.url);
-        jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body) +
-            System.lineSeparator();
-        contentLength = jsonString.getBytes().length;
     }
 
     public String getBody() {

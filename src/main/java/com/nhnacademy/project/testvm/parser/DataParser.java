@@ -20,6 +20,7 @@ public class DataParser {
     private final String clientIp;
     private final Date date = new Date();
     private final JsonData body = new JsonData();
+    private final MakeResponse makeResponse = new MakeResponse();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("E, d ,M yyyy HH:mm:ss z");
     private final StringBuilder header = new StringBuilder();
     private final ParsingData parsingData = new ParsingData();
@@ -47,12 +48,22 @@ public class DataParser {
                 continue;
             }
             body.putHeaders(line.split(":")[0], line.split(":")[1]);
+
         }
-        makeUrl();
+        //makeUrl();
         makeBody();
         makeHeader(dateString);
 
         return header;
+    }
+
+    private void checkParamList() {
+        List<String> paramList = List.of(parsingData.getPath().split("\\?")[1].split("\\&"));
+        if (paramList.isEmpty()) {
+            parsingData.setParam(parsingData.getPath().split("\\?")[1]);
+            paramList.add(parsingData.getParam());
+        }
+        paramList.forEach(a -> body.putArgs(a.split("=")[0], a.split("=")[1]));
     }
 
     private void makeHeader(String dateString) {
@@ -67,20 +78,11 @@ public class DataParser {
         header.append(System.lineSeparator());
     }
 
-    private void checkParamList() {
-        List<String> paramList = List.of(parsingData.getPath().split("\\?")[1].split("\\&"));
-        if (paramList.isEmpty()) {
-            parsingData.setParam(parsingData.getPath().split("\\?")[1]);
-            paramList.add(parsingData.getParam());
-        }
-        paramList.forEach(a -> body.putArgs(a.split("=")[0], a.split("=")[1]));
-    }
-
-
-    void makeUrl() {
-        url = "http://" + body.getHeaders().get("Host") + parsingData.getPath();
-        url = url.replace(" ", "");
-    }
+//
+//    void makeUrl() {
+//        url = "http://" + body.getHeaders().get("Host") + parsingData.getPath();
+//        url = url.replace(" ", "");
+//    }
 
     void makeBody() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();

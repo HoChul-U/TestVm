@@ -21,10 +21,6 @@ public class JsonData {
 
     private String url = "{}";
 
-    public void setArgs(Map<String, String> args) {
-        this.args = args;
-    }
-
     public void putFiles(String key, String value) {
         this.args.put(key, value);
     }
@@ -35,10 +31,6 @@ public class JsonData {
 
     public void putHeaders(String key, String value) {
         this.headers.put(key, value);
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
     }
 
     public void setJson(Map<String, String> json) {
