@@ -48,11 +48,15 @@ public class Server {
             writer = new PrintWriter(clientSocket.getOutputStream());
 
 
+            System.out.println(reader);
             String l;
-            while (!(l = reader.readLine()).isEmpty()) {
+            int tmp;
+            while ((l = reader.readLine())!=null || (tmp = reader.read())==10||tmp==13) {
                 request.append(l + "\n");
             }
+
             dataParser = new DataParser(request, clientIp);
+            //dataParser = new DataParser(reader, clientIp);
             StringBuilder header = dataParser.dataParsing();
             //System.out.println(header);
             String body = dataParser.getBody();
