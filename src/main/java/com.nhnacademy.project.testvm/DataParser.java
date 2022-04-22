@@ -44,12 +44,9 @@ public class DataParser {
                 path = line.split(" ")[1];
                 http = line.split(" ")[2];
 
-                if(path.contains("\\&")){
-                    paramList = List.of(path.split("\\?")[1].split("\\&"));
+                if (path.indexOf("?")>0) {
+                    checkParamList();
                 }
-                param = path.split("\\?")[1];
-                //paramList.forEach(param1 -> System.out.println(param1));
-                System.out.println(param+"??");
 
                 count++;
                 continue;
@@ -70,6 +67,15 @@ public class DataParser {
         header.append(System.lineSeparator());
 
         return header;
+    }
+
+    private void checkParamList() {
+        paramList = List.of(path.split("\\?")[1].split("\\&"));
+        if (paramList.isEmpty()) {
+            param = path.split("\\?")[1];
+            paramList.add(param);
+        }
+        paramList.forEach(a -> System.out.println(a));
     }
 
     void makeUrl() {
