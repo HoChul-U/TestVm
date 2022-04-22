@@ -1,86 +1,85 @@
-package com.nhnacademy.project.testvm;
+package com.nhnacademy.project.testvm.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.project.testvm.data.JsonData;
+import com.nhnacademy.project.testvm.data.ParsingData;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class DataParser {
-    private static int count = 0;
-    private String http;
-    private String path;
+    private int count = 0;
+    private int contentLength;
+
     private String url;
-    private String param;
-    private List<String> paramList;
-    int length;
-    Date date = new Date();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("E, d ,M yyyy HH:mm:ss z");
+    private String jsonString;
 
     private final StringBuilder request;
     private final String clientIp;
+    private final Date date = new Date();
     private final JsonData body = new JsonData();
-    private final Map<String, String> map = new HashMap<>();
-    StringBuilder header = new StringBuilder();
-
-    private String jsonString;
-
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("E, d ,M yyyy HH:mm:ss z");
+    private final StringBuilder header = new StringBuilder();
+    private final ParsingData parsingData = new ParsingData();
 
     public DataParser(StringBuilder request, String clientIp) {
         this.request = request;
         this.clientIp = clientIp;
     }
 
-    StringBuilder dataParsing() throws JsonProcessingException {
+    public StringBuilder dataParsing() throws JsonProcessingException {
         String dateString = dateFormat.format(date);
         Scanner scanner = new Scanner(request.toString());
         String line;
         while ((scanner.hasNextLine())) {
             line = scanner.nextLine();
             if (count == 0) {
-                path = line.split(" ")[1];
-                http = line.split(" ")[2];
+                parsingData.setPath(line.split(" ")[1]);
+                parsingData.setHttp(line.split(" ")[2]);
 
-                if (path.indexOf("?")>0) {
+                if (parsingData.getPath().contains("?")) {
                     checkParamList();
                 }
 
                 count++;
                 continue;
             }
-            map.put(line.split(":")[0], line.split(":")[1]);
+            body.putHeaders(line.split(":")[0], line.split(":")[1]);
         }
-        body.setHeaders(map);
         makeUrl();
         makeBody();
-        header.append(http + " 200 OK" + System.lineSeparator());
+        makeHeader(dateString);
+
+        return header;
+    }
+
+    private void makeHeader(String dateString) {
+        header.append(parsingData.getHttp() + " 200 OK" + System.lineSeparator());
         header.append("Content-Type: application/json" + System.lineSeparator());
         header.append("Date: " + dateString + System.lineSeparator());
-        header.append("Content-length: " + length + System.lineSeparator());
+        header.append("Content-length: " + contentLength + System.lineSeparator());
         header.append("Connection: keep-alive" + System.lineSeparator());
         header.append("Server: gunicorn/19.9.0" + System.lineSeparator());
         header.append("Access-Control-Allow-Origin: *" + System.lineSeparator());
         header.append("Access-Control-Allow-Credentials: true" + System.lineSeparator());
         header.append(System.lineSeparator());
-
-        return header;
     }
 
     private void checkParamList() {
-        paramList = List.of(path.split("\\?")[1].split("\\&"));
+        List<String> paramList = List.of(parsingData.getPath().split("\\?")[1].split("\\&"));
         if (paramList.isEmpty()) {
-            param = path.split("\\?")[1];
-            paramList.add(param);
+            parsingData.setParam(parsingData.getPath().split("\\?")[1]);
+            paramList.add(parsingData.getParam());
         }
-        paramList.forEach(a -> System.out.println(a));
+        paramList.forEach(a -> body.putArgs(a.split("=")[0], a.split("=")[1]));
     }
 
+
     void makeUrl() {
-        url = "http://" + map.get("Host") + this.path;
-        url = url.replace(" ","");
+        url = "http://" + body.getHeaders().get("Host") + parsingData.getPath();
+        url = url.replace(" ", "");
     }
 
     void makeBody() throws JsonProcessingException {
@@ -89,10 +88,10 @@ public class DataParser {
         body.setUrl(this.url);
         jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body) +
             System.lineSeparator();
-        length = jsonString.getBytes().length;
+        contentLength = jsonString.getBytes().length;
     }
 
-    String getBody() {
+    public String getBody() {
         return this.jsonString;
     }
 }

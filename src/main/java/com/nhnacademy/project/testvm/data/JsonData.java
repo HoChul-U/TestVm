@@ -1,4 +1,4 @@
-package com.nhnacademy.project.testvm;
+package com.nhnacademy.project.testvm.data;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
@@ -19,6 +19,13 @@ public class JsonData {
     public void setArgs(Map<String, String> args) {
         this.args = args;
     }
+    public void putArgs(String key, String value){
+        this.args.put(key, value);
+    }
+    public void putHeaders(String key, String value){
+        this.headers.put(key, value);
+    }
+
 
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;

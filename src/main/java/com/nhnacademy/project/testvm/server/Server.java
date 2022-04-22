@@ -1,12 +1,11 @@
-package com.nhnacademy.project.testvm;
+package com.nhnacademy.project.testvm.server;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.nhnacademy.project.testvm.parser.DataParser;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
