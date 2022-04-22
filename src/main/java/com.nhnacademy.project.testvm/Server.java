@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -43,12 +44,15 @@ public class Server {
     public void start(int port) {
         try {
             socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("192.168.71.21", port));
+            socket.bind(new InetSocketAddress("127.0.0.1", port));
             clientSocket = socket.accept();
             clientIp = String.valueOf(clientSocket.getInetAddress());
 
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintStream printStream = new PrintStream(clientSocket.getOutputStream());
+            PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
             writer = new DataOutputStream(clientSocket.getOutputStream());
+
             String l;
             while (!(l = reader.readLine()).isEmpty()) {
                 //!(l = reader.readLine()).equals(null)
@@ -58,9 +62,23 @@ public class Server {
             }
             dataParser = new DataParser(request, clientIp);
             String n = dataParser.makeBody();
+
 //            writer.writeBytes(dataParser.dataParsing());
             Scanner sc = new Scanner(dataParser.dataParsing().toString());
-            writer.writeBytes(sc.nextLine());
+
+            System.out.println(n);
+            String result = "< HTTP/1.1 200 OK"
+                + "\n" + "< Date: Thu, 21 Apr 2022 02:56:58 GMT"
+                + "\n" + "< Content - Type: application/json"
+                + "\n" + "< Content - Length: 33"
+                + "\n" + "< Connection;: keep-alive"
+                + "\n" + "< Server;: gunicorn/19.9.0"
+                + "\n" + "< Access - Control - Allow - Origin;: *"
+                + "\n" + "< Access - Control - Allow - Credentials: true";
+            //printStream.println(result);
+            printWriter.println(result);
+            printWriter.flush();
+            //writer.writeBytes(sc.nextLine());
             writer.flush();
 
             //System.out.println(request.toString());
@@ -68,7 +86,6 @@ public class Server {
             e.printStackTrace();
         }
     }
-
 
 
 }

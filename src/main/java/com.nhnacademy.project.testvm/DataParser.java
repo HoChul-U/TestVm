@@ -38,18 +38,16 @@ public class DataParser {
         header.append("Access-Control-Allow-Credentials: true");
 
         System.out.println(header);
-//        makeBody();
         return header;
 
     }
 
     String makeBody() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        body.setOrigin(this.clientIp);
-        jsonString = objectMapper.writeValueAsString(body);
+        body.setOrigin(this.clientIp.replace("/", ""));
+        jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
         length = jsonString.getBytes().length;
 
-        System.out.println(jsonString);
         return jsonString;
     }
 }
