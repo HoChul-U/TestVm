@@ -67,17 +67,16 @@ public class Server {
             Scanner sc = new Scanner(dataParser.dataParsing().toString());
 
             System.out.println(n);
-            String result = "< HTTP/1.1 200 OK"
-                + "\n" + "< Date: Thu, 21 Apr 2022 02:56:58 GMT"
-                + "\n" + "< Content - Type: application/json"
-                + "\n" + "< Content - Length: 33"
-                + "\n" + "< Connection;: keep-alive"
-                + "\n" + "< Server;: gunicorn/19.9.0"
-                + "\n" + "< Access - Control - Allow - Origin;: *"
-                + "\n" + "< Access - Control - Allow - Credentials: true";
-            //printStream.println(result);
+            String result = "HTTP/1.1 200 OK"
+                + "\r" + "Date: Thu, 21 Apr 2022 02:56:58 GMT"
+                + "\r" + "Content - Type: application/json"
+                + "\r" + "Content - Length: 33"
+                + "\r" + "Connection;: keep-alive"
+                + "\r" + "Server;: gunicorn/19.9.0"
+                + "\r" + "Access - Control - Allow - Origin;: *"
+                + "\r" + "Access - Control - Allow - Credentials: true";
+//            printStream.println(result);
             printWriter.println(result);
-            printWriter.flush();
             //writer.writeBytes(sc.nextLine());
             writer.flush();
 
