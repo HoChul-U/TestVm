@@ -22,6 +22,8 @@ public class Server {
 
     @Parameter(names = {"port", "-l"})
     int port;
+    @Parameter
+    String value;
 
     public static void main(String... argv) {
         Server main = new Server();
@@ -40,7 +42,7 @@ public class Server {
     public void start(int port) {
         try {
             socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("127.0.0.1", port));
+            socket.bind(new InetSocketAddress("192.168.71.76", port));
             clientSocket = socket.accept();
             clientIp = String.valueOf(clientSocket.getInetAddress());
 
@@ -48,17 +50,12 @@ public class Server {
             writer = new PrintWriter(clientSocket.getOutputStream());
 
 
-            System.out.println(reader);
             String l;
-            int tmp;
-            while ((l = reader.readLine())!=null || (tmp = reader.read())==10||tmp==13) {
+            while (!(l = reader.readLine()).isEmpty()) {
                 request.append(l + "\n");
             }
-
             dataParser = new DataParser(request, clientIp);
-            //dataParser = new DataParser(reader, clientIp);
             StringBuilder header = dataParser.dataParsing();
-            //System.out.println(header);
             String body = dataParser.getBody();
             writer.append(header);
             writer.append(body);

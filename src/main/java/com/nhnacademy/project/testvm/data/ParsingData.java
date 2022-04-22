@@ -2,10 +2,7 @@ package com.nhnacademy.project.testvm.data;
 
 public class ParsingData {
     private String http;
-
     private String path;
-
-    private String contentType;
 
     public String getHttp() {
         return http;

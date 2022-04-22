@@ -10,25 +10,25 @@ public class JsonData {
 
     private Map<String,String> args = new HashMap<>();
 
-    private String data = "";
-
-    private Map<String, String> files = new HashMap<>();
-
-    private Map<String, String> form = new HashMap<>();
-
     private Map<String,String> headers = new HashMap<>();
-
 
     private String origin;
 
-    private String url ="{}";
+    private String url="{}";
 
+    public void setArgs(Map<String, String> args) {
+        this.args = args;
+    }
     public void putArgs(String key, String value){
         this.args.put(key, value);
     }
-
     public void putHeaders(String key, String value){
         this.headers.put(key, value);
+    }
+
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 
     public void setUrl(String url) {
@@ -53,17 +53,5 @@ public class JsonData {
 
     public void setOrigin(String origin) {
         this.origin = origin;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public Map<String, String> getFiles() {
-        return files;
-    }
-
-    public Map<String, String> getForm() {
-        return form;
     }
 }
