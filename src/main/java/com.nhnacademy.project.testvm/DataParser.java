@@ -24,20 +24,21 @@ public class DataParser {
     }
 
     StringBuilder dataParsing() throws JsonProcessingException {
+        String http;
         String dateString = dateFormat.format(date);
         Scanner scanner = new Scanner(request.toString());
         String oneLine = scanner.nextLine();
-        oneLine = oneLine.split("/ ")[1];
-        header.append(oneLine + " 200 OK" + "\n");
-        header.append("Content-Type: application/json" + "\n");
-        header.append("Date: " + dateString + "\n");
-        header.append("Content-length: " + length + "\n");
-        header.append("Connection: keep-alive" + "\n");
-        header.append("Server: gunicorn/19.9.0");
-        header.append("Access-Control-Allow-Origin: *" + "\n");
-        header.append("Access-Control-Allow-Credentials: true");
-
-        System.out.println(header);
+        System.out.println(oneLine);
+        http = oneLine.split(" ")[2];
+        header.append(http + " 200 OK" + System.lineSeparator());
+        header.append("Content-Type: application/json" + System.lineSeparator());
+        header.append("Date: " + dateString + System.lineSeparator());
+        header.append("Content-length: " + length + System.lineSeparator());
+        header.append("Connection: keep-alive" + System.lineSeparator());
+        header.append("Server: gunicorn/19.9.0"+ System.lineSeparator());
+        header.append("Access-Control-Allow-Origin: *" + System.lineSeparator());
+        header.append("Access-Control-Allow-Credentials: true"+ System.lineSeparator());
+        header.append(System.lineSeparator());
         return header;
 
     }
@@ -45,7 +46,7 @@ public class DataParser {
     String makeBody() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         body.setOrigin(this.clientIp.replace("/", ""));
-        jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+        jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)+System.lineSeparator();
         length = jsonString.getBytes().length;
 
         return jsonString;

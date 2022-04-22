@@ -44,7 +44,7 @@ public class Server {
     public void start(int port) {
         try {
             socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("127.0.0.1", port));
+            socket.bind(new InetSocketAddress("192.168.71.72", port));
             clientSocket = socket.accept();
             clientIp = String.valueOf(clientSocket.getInetAddress());
 
@@ -61,31 +61,23 @@ public class Server {
 //                writer.flush();
             }
             dataParser = new DataParser(request, clientIp);
-            String n = dataParser.makeBody();
-
+            String body = dataParser.makeBody();
+            StringBuilder header = dataParser.dataParsing();
 //            writer.writeBytes(dataParser.dataParsing());
-            Scanner sc = new Scanner(dataParser.dataParsing().toString());
+            //Scanner sc = new Scanner(dataParser.dataParsing().toString());
+            System.out.println(header);
+            System.out.println(body);
 
-            System.out.println(n);
-            String result = "HTTP/1.1 200 OK"
-                + "\r" + "Date: Thu, 21 Apr 2022 02:56:58 GMT"
-                + "\r" + "Content - Type: application/json"
-                + "\r" + "Content - Length: 33"
-                + "\r" + "Connection;: keep-alive"
-                + "\r" + "Server;: gunicorn/19.9.0"
-                + "\r" + "Access - Control - Allow - Origin;: *"
-                + "\r" + "Access - Control - Allow - Credentials: true";
-//            printStream.println(result);
-            printWriter.println(result);
+            printWriter.append(header);
+            printWriter.append(body);
+            printWriter.flush();
             //writer.writeBytes(sc.nextLine());
-            writer.flush();
+            //writer.flush();
 
             //System.out.println(request.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 }
 
