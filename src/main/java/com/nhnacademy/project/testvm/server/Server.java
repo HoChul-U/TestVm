@@ -56,6 +56,7 @@ public class Server {
             }
             dataParser = new DataParser(request, clientIp);
             StringBuilder header = dataParser.dataParsing();
+            //System.out.println(header);
             String body = dataParser.getBody();
             writer.append(header);
             writer.append(body);

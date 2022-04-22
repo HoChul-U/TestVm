@@ -16,13 +16,16 @@ public class DataParser {
     private String url;
     private String jsonString;
 
+    private StringBuilder header = new StringBuilder();
+
     private final StringBuilder request;
     private final String clientIp;
     private final Date date = new Date();
     private final JsonData body = new JsonData();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("E, d ,M yyyy HH:mm:ss z");
-    private final StringBuilder header = new StringBuilder();
     private final ParsingData parsingData = new ParsingData();
+
+    private final MakeResponse responseMaker = new MakeResponse();
 
     public DataParser(StringBuilder request, String clientIp) {
         this.request = request;
@@ -48,7 +51,9 @@ public class DataParser {
             }
             body.putHeaders(line.split(":")[0], line.split(":")[1]);
         }
-        makeUrl();
+        this.url = responseMaker.makeUrl(this.body, parsingData.getPath());
+//        this.jsonString = responseMaker.makeBody(this.url, this.clientIp);
+//        this.header = responseMaker.makeHeader(dateString,parsingData.getHttp());
         makeBody();
         makeHeader(dateString);
 
@@ -74,12 +79,6 @@ public class DataParser {
             paramList.add(parsingData.getParam());
         }
         paramList.forEach(a -> body.putArgs(a.split("=")[0], a.split("=")[1]));
-    }
-
-
-    void makeUrl() {
-        url = "http://" + body.getHeaders().get("Host") + parsingData.getPath();
-        url = url.replace(" ", "");
     }
 
     void makeBody() throws JsonProcessingException {
