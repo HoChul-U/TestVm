@@ -1,34 +1,48 @@
 package com.nhnacademy.project.testvm.data;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import java.net.PortUnreachableException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JsonData {
 
-    private Map<String,String> args = new HashMap<>();
+    private Map<String, String> args = new HashMap<>();
 
-    private Map<String,String> headers = new HashMap<>();
+    private String data = "";
+
+    private Map<String, String> files = new HashMap<>();
+
+    private Map<String, String> form = new HashMap<>();
+
+    private Map<String, String> headers = new HashMap<>();
+
+    private Map<String, String> json = new HashMap<>();
 
     private String origin;
 
-    private String url="{}";
+    private String url = "{}";
 
     public void setArgs(Map<String, String> args) {
         this.args = args;
     }
-    public void putArgs(String key, String value){
+
+    public void putFiles(String key, String value) {
         this.args.put(key, value);
     }
-    public void putHeaders(String key, String value){
+
+    public void putArgs(String key, String value) {
+        this.args.put(key, value);
+    }
+
+    public void putHeaders(String key, String value) {
         this.headers.put(key, value);
     }
 
-
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
+    }
+
+    public void setJson(Map<String, String> json) {
+        this.json = json;
     }
 
     public void setUrl(String url) {
@@ -47,11 +61,31 @@ public class JsonData {
         return origin;
     }
 
+    public void setData(String data) {
+        this.data = data;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public void setOrigin(String origin) {
         this.origin = origin;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public Map<String, String> getFiles() {
+        return files;
+    }
+
+    public Map<String, String> getForm() {
+        return form;
+    }
+
+    public Map<String, String> getJson() {
+        return json;
     }
 }

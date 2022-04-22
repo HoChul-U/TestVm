@@ -7,6 +7,7 @@ import com.nhnacademy.project.testvm.data.ParsingData;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class SecondDataParser {
@@ -15,7 +16,7 @@ public class SecondDataParser {
 
     private String url;
     private String jsonString;
-
+    private ObjectMapper objectMapper = new ObjectMapper();
     private final StringBuilder request;
     private final String clientIp;
     private final Date date = new Date();
@@ -51,9 +52,15 @@ public class SecondDataParser {
         while(scanner.hasNextLine()){
             line = scanner.nextLine();
             System.out.println(line);
-            if(!line.isEmpty()){
-                //ToDO
-            }
+            body.setData(line);
+            System.out.println(body.getData());
+            Map<String,String >map = objectMapper.readValue(line,Map.class);
+            body.setJson(map);
+
+            System.out.println(map.toString());
+//            if(!line.isEmpty()){
+//
+//            }
         }
         makeUrl();
         makeBody();
@@ -90,7 +97,6 @@ public class SecondDataParser {
     }
 
     void makeBody() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
         body.setOrigin(this.clientIp.replace("/", ""));
         body.setUrl(this.url);
         jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body) +

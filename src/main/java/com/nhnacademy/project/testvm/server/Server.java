@@ -57,7 +57,6 @@ public class Server {
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             writer = new PrintWriter(clientSocket.getOutputStream());
 
-
             byte[] bytes = clientSocket.getInputStream().readAllBytes();
             String l;
             while (!(l = reader.readLine()).isEmpty()) {
