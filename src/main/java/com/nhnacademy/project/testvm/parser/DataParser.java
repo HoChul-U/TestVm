@@ -35,6 +35,7 @@ public class DataParser {
         String dateString = dateFormat.format(date);
         Scanner scanner = new Scanner(request.toString());
         String line;
+        String line2;
         System.out.println(request);
         while (!(line = scanner.nextLine()).isEmpty()) {
             if (count == 0) {
