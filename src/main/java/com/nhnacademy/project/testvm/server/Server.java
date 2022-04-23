@@ -41,8 +41,8 @@ public class Server {
 
             String test = new String(byteBufferString);
             StringBuilder request = new StringBuilder(test.substring(0, readSize));
-            int readSize2 = reader.read(byteBufferString2);
 
+            int readSize2 = reader.read(byteBufferString2);
             String test2 = new String(byteBufferString2);
 
             DataParser dataParser = new DataParser(request, clientIp);
