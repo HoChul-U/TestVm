@@ -7,9 +7,11 @@ import java.util.Scanner;
 
 public class MakeResponse {
 
-    int contentLength;
-    String line;
-    ObjectMapper objectMapper = new ObjectMapper();
+    private int contentLength;
+
+    private String line;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void makeHeader(StringBuilder header, String dateString, String http,
                            int contentLength) {
@@ -23,7 +25,6 @@ public class MakeResponse {
         header.append("Access-Control-Allow-Credentials: true" + System.lineSeparator());
         header.append(System.lineSeparator());
     }
-
 
     public String makeUrl(String host, String path) {
         String url = "http://" + host + path;
@@ -47,5 +48,9 @@ public class MakeResponse {
         return line
             .split("\r\n\r\n")[1]
             .split("-")[0];
+    }
+
+    public int getContentLength() {
+        return contentLength;
     }
 }

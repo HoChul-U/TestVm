@@ -27,13 +27,12 @@ public class Server {
     public void start(int port) {
         try {
             ServerSocket socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("192.168.0.12", port));
+            socket.bind(new InetSocketAddress("127.0.0.1", port));
             Socket clientSocket = socket.accept();
             String clientIp = String.valueOf(clientSocket.getInetAddress());
 
             InputStream reader = clientSocket.getInputStream();
             PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
-
 
             byte[] byteBufferString = new byte[4048];
             byte[] byteBufferString2 = new byte[4048];

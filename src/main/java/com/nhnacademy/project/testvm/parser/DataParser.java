@@ -34,9 +34,17 @@ public class DataParser {
     public StringBuilder dataParsing() throws JsonProcessingException {
         String dateString = dateFormat.format(date);
         Scanner scanner = new Scanner(request.toString());
+        headerParser(scanner);
+        bodyParser(scanner, body.getHeaders().get("Content-Type"));
+        String url = makeResponse.makeUrl(body.getHeaders().get("Host"), parsingData.getPath());
+        jsonString = makeResponse.makeBody(body, clientIp, url);
+        makeResponse.makeHeader(header, dateString, parsingData.getHttp(),
+            makeResponse.getContentLength());
+        return header;
+    }
+
+    private void headerParser(Scanner scanner) {
         String line;
-        String line2;
-//        System.out.println(request);
         while (!(line = scanner.nextLine()).isEmpty()) {
             if (count == 0) {
                 parsingData.setPath(line.split(" ")[1]);
@@ -48,18 +56,13 @@ public class DataParser {
                 count++;
                 continue;
             }
-
             body.putHeaders(line.split(":")[0], line.split(":")[1]);
         }
-//        while (scanner.hasNextLine()) {
-//            line = scanner.nextLine();
-//            body.setData(line);
-//            Map<String, String> map = objectMapper.readValue(line, Map.class);
-//            body.setJson(map);
-//        }
-        String type;
-        if (((type = body.getHeaders().get("Content-Type")) != null) &&
-            type.contains("multipart/form-data")) {
+    }
+
+    private void bodyParser(Scanner scanner, String contentType) throws JsonProcessingException {
+        String line;
+        if ((contentType != null) && contentType.contains("multipart/form-data")) {
             this.body.putFiles("upload", makeResponse.makeFileData(scanner));
         } else {
             while (scanner.hasNextLine()) {
@@ -69,11 +72,6 @@ public class DataParser {
                 body.setJson(map);
             }
         }
-        String url = makeResponse.makeUrl(body.getHeaders().get("Host"), parsingData.getPath());
-        jsonString = makeResponse.makeBody(body, clientIp, url);
-        makeResponse.makeHeader(header, dateString, parsingData.getHttp(),
-            makeResponse.contentLength);
-        return header;
     }
 
     private void checkParamList() {
