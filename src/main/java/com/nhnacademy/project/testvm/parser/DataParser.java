@@ -36,7 +36,7 @@ public class DataParser {
         Scanner scanner = new Scanner(request.toString());
         String line;
         String line2;
-        System.out.println(request);
+//        System.out.println(request);
         while (!(line = scanner.nextLine()).isEmpty()) {
             if (count == 0) {
                 parsingData.setPath(line.split(" ")[1]);
@@ -51,14 +51,21 @@ public class DataParser {
 
             body.putHeaders(line.split(":")[0], line.split(":")[1]);
         }
-        while (scanner.hasNextLine()) {
-            line = scanner.nextLine();
-            body.setData(line);
-            Map<String, String> map = objectMapper.readValue(line, Map.class);
-            body.setJson(map);
-        }
+//        while (scanner.hasNextLine()) {
+//            line = scanner.nextLine();
+//            body.setData(line);
+//            Map<String, String> map = objectMapper.readValue(line, Map.class);
+//            body.setJson(map);
+//        }
         if(body.getHeaders().get("Content-Type").contains("multipart/form-data")) {
-            makeResponse.makeFileData();
+            makeResponse.makeFileData(scanner, body);
+        } else {
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                body.setData(line);
+                Map<String, String> map = objectMapper.readValue(line, Map.class);
+                body.setJson(map);
+            }
         }
         String url = makeResponse.makeUrl(body.getHeaders().get("Host"), parsingData.getPath());
         jsonString = makeResponse.makeBody(body, clientIp, url);

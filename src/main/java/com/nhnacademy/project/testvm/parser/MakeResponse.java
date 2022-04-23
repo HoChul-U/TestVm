@@ -3,10 +3,14 @@ package com.nhnacademy.project.testvm.parser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.project.testvm.data.JsonData;
+import java.util.Map;
+import java.util.Scanner;
 
 public class MakeResponse {
 
     int contentLength;
+    String line;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     public void makeHeader(StringBuilder header, String dateString, String http, int contentLength) {
         header.append(http + " 200 OK" + System.lineSeparator());
@@ -28,7 +32,6 @@ public class MakeResponse {
 
     public String makeBody(JsonData body, String clientIp, String url)
         throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
         body.setOrigin(clientIp.replace("/", ""));
         body.setUrl(url);
         String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body) +
@@ -37,7 +40,18 @@ public class MakeResponse {
         return jsonString;
     }
 
-    public void makeFileData(){
+    public void makeFileData(Scanner scanner, JsonData body){
+        while (scanner.hasNextLine()) {
+            line = scanner.nextLine();
+            System.out.println(line);
+        }
+        if (line.contains("{")) {
+            System.out.println(line);
+        }
 
+
+        //        if (!(line = scanner.nextLine()).isEmpty()) {
+//
+//        }
     }
 }
