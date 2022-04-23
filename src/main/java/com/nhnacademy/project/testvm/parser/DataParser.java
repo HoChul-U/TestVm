@@ -5,25 +5,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.project.testvm.data.JsonData;
 import com.nhnacademy.project.testvm.data.ParsingData;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class DataParser {
     private int count = 0;
-    private int contentLength;
 
-    private String url;
     private String jsonString;
 
-    private final StringBuilder request;
     private final String clientIp;
+    private final StringBuilder request;
     private final Date date = new Date();
     private final JsonData body = new JsonData();
-    private final MakeResponse makeResponse = new MakeResponse();
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("E, d ,M yyyy HH:mm:ss z");
     private final StringBuilder header = new StringBuilder();
     private final ParsingData parsingData = new ParsingData();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final MakeResponse makeResponse = new MakeResponse();
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("E, d ,M yyyy HH:mm:ss z");
 
     public DataParser(StringBuilder request, String clientIp) {
         this.request = request;
@@ -34,8 +35,7 @@ public class DataParser {
         String dateString = dateFormat.format(date);
         Scanner scanner = new Scanner(request.toString());
         String line;
-        while ((scanner.hasNextLine())) {
-            line = scanner.nextLine();
+        while (!(line = scanner.nextLine()).isEmpty()) {
             if (count == 0) {
                 parsingData.setPath(line.split(" ")[1]);
                 parsingData.setHttp(line.split(" ")[2]);
@@ -48,49 +48,27 @@ public class DataParser {
                 continue;
             }
             body.putHeaders(line.split(":")[0], line.split(":")[1]);
-
         }
-        //makeUrl();
-        makeBody();
-        makeHeader(dateString);
-
+        while (scanner.hasNextLine()) {
+            line = scanner.nextLine();
+            body.setData(line);
+            Map<String, String> map = objectMapper.readValue(line, Map.class);
+            body.setJson(map);
+        }
+        String url = makeResponse.makeUrl(body.getHeaders().get("Host"), parsingData.getPath());
+        jsonString = makeResponse.makeBody(body, clientIp, url);
+        makeResponse.makeHeader(header, dateString, parsingData.getHttp(), makeResponse.contentLength);
         return header;
     }
 
+
     private void checkParamList() {
-        List<String> paramList = List.of(parsingData.getPath().split("\\?")[1].split("\\&"));
+        List<String> paramList = new ArrayList<>(List.of(parsingData.getPath().split("\\?")[1].split("&")));
         if (paramList.isEmpty()) {
             parsingData.setParam(parsingData.getPath().split("\\?")[1]);
             paramList.add(parsingData.getParam());
         }
         paramList.forEach(a -> body.putArgs(a.split("=")[0], a.split("=")[1]));
-    }
-
-    private void makeHeader(String dateString) {
-        header.append(parsingData.getHttp() + " 200 OK" + System.lineSeparator());
-        header.append("Content-Type: application/json" + System.lineSeparator());
-        header.append("Date: " + dateString + System.lineSeparator());
-        header.append("Content-length: " + contentLength + System.lineSeparator());
-        header.append("Connection: keep-alive" + System.lineSeparator());
-        header.append("Server: gunicorn/19.9.0" + System.lineSeparator());
-        header.append("Access-Control-Allow-Origin: *" + System.lineSeparator());
-        header.append("Access-Control-Allow-Credentials: true" + System.lineSeparator());
-        header.append(System.lineSeparator());
-    }
-
-//
-//    void makeUrl() {
-//        url = "http://" + body.getHeaders().get("Host") + parsingData.getPath();
-//        url = url.replace(" ", "");
-//    }
-
-    void makeBody() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        body.setOrigin(this.clientIp.replace("/", ""));
-        body.setUrl(this.url);
-        jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body) +
-            System.lineSeparator();
-        contentLength = jsonString.getBytes().length;
     }
 
     public String getBody() {

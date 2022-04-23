@@ -8,8 +8,7 @@ public class MakeResponse {
 
     int contentLength;
 
-    public void makeHeader(StringBuilder header, String dateString, String http,
-                           int contentLength) {
+    public void makeHeader(StringBuilder header, String dateString, String http, int contentLength) {
         header.append(http + " 200 OK" + System.lineSeparator());
         header.append("Content-Type: application/json" + System.lineSeparator());
         header.append("Date: " + dateString + System.lineSeparator());
