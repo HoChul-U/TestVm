@@ -26,7 +26,7 @@ public class JsonData {
     }
 
     public void putFiles(String key, String value) {
-        this.args.put(key, value);
+        this.files.put(key, value);
     }
 
     public void putHeaders(String key, String value) {

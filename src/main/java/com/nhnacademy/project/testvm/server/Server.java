@@ -27,7 +27,7 @@ public class Server {
     public void start(int port) {
         try {
             ServerSocket socket = new ServerSocket();
-            socket.bind(new InetSocketAddress("127.0.0.1", port));
+            socket.bind(new InetSocketAddress("192.168.0.12", port));
             Socket clientSocket = socket.accept();
             String clientIp = String.valueOf(clientSocket.getInetAddress());
 

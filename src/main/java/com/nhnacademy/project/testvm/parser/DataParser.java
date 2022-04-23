@@ -57,8 +57,10 @@ public class DataParser {
 //            Map<String, String> map = objectMapper.readValue(line, Map.class);
 //            body.setJson(map);
 //        }
-        if(body.getHeaders().get("Content-Type").contains("multipart/form-data")) {
-            makeResponse.makeFileData(scanner, body);
+        String type;
+        if (((type = body.getHeaders().get("Content-Type")) != null) &&
+            type.contains("multipart/form-data")) {
+            this.body.putFiles("upload", makeResponse.makeFileData(scanner));
         } else {
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
@@ -69,12 +71,14 @@ public class DataParser {
         }
         String url = makeResponse.makeUrl(body.getHeaders().get("Host"), parsingData.getPath());
         jsonString = makeResponse.makeBody(body, clientIp, url);
-        makeResponse.makeHeader(header, dateString, parsingData.getHttp(), makeResponse.contentLength);
+        makeResponse.makeHeader(header, dateString, parsingData.getHttp(),
+            makeResponse.contentLength);
         return header;
     }
 
     private void checkParamList() {
-        List<String> paramList = new ArrayList<>(List.of(parsingData.getPath().split("\\?")[1].split("&")));
+        List<String> paramList =
+            new ArrayList<>(List.of(parsingData.getPath().split("\\?")[1].split("&")));
         if (paramList.isEmpty()) {
             parsingData.setParam(parsingData.getPath().split("\\?")[1]);
             paramList.add(parsingData.getParam());

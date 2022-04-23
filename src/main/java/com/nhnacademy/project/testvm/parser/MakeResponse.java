@@ -3,7 +3,6 @@ package com.nhnacademy.project.testvm.parser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.project.testvm.data.JsonData;
-import java.util.Map;
 import java.util.Scanner;
 
 public class MakeResponse {
@@ -12,7 +11,8 @@ public class MakeResponse {
     String line;
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public void makeHeader(StringBuilder header, String dateString, String http, int contentLength) {
+    public void makeHeader(StringBuilder header, String dateString, String http,
+                           int contentLength) {
         header.append(http + " 200 OK" + System.lineSeparator());
         header.append("Content-Type: application/json" + System.lineSeparator());
         header.append("Date: " + dateString + System.lineSeparator());
@@ -40,18 +40,12 @@ public class MakeResponse {
         return jsonString;
     }
 
-    public void makeFileData(Scanner scanner, JsonData body){
+    public String makeFileData(Scanner scanner) {
         while (scanner.hasNextLine()) {
-            line = scanner.nextLine();
-            System.out.println(line);
+            line += scanner.nextLine() + System.lineSeparator();
         }
-        if (line.contains("{")) {
-            System.out.println(line);
-        }
-
-
-        //        if (!(line = scanner.nextLine()).isEmpty()) {
-//
-//        }
+        return line
+            .split("\r\n\r\n")[1]
+            .split("-")[0];
     }
 }
