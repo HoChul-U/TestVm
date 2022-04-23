@@ -36,4 +36,8 @@ public class MakeResponse {
         contentLength = jsonString.getBytes().length;
         return jsonString;
     }
+
+    public void makeFileData(){
+
+    }
 }
