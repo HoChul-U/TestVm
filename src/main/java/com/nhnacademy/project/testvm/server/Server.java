@@ -34,11 +34,16 @@ public class Server {
             InputStream reader = clientSocket.getInputStream();
             PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
 
+
             byte[] byteBufferString = new byte[4048];
+            byte[] byteBufferString2 = new byte[4048];
             int readSize = reader.read(byteBufferString);
 
             String test = new String(byteBufferString);
             StringBuilder request = new StringBuilder(test.substring(0, readSize));
+            int readSize2 = reader.read(byteBufferString2);
+
+            String test2 = new String(byteBufferString2);
 
             DataParser dataParser = new DataParser(request, clientIp);
             StringBuilder header = dataParser.dataParsing();
