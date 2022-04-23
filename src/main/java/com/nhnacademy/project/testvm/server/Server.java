@@ -39,11 +39,14 @@ public class Server {
             byte[] byteBufferString2 = new byte[4048];
             int readSize = reader.read(byteBufferString);
 
-            String test = new String(byteBufferString);
-            StringBuilder request = new StringBuilder(test.substring(0, readSize));
+            String bufferConvertString = new String(byteBufferString);
+            StringBuilder request = new StringBuilder(bufferConvertString.substring(0, readSize));
 
-            int readSize2 = reader.read(byteBufferString2);
-            String test2 = new String(byteBufferString2);
+            if(bufferConvertString.contains("multipart/form-data")) {
+                readSize = reader.read(byteBufferString2);
+                bufferConvertString = new String(byteBufferString2);
+                request.append(bufferConvertString.substring(0, readSize));
+            }
 
             DataParser dataParser = new DataParser(request, clientIp);
             StringBuilder header = dataParser.dataParsing();

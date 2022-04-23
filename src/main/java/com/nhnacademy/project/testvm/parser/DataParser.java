@@ -35,6 +35,7 @@ public class DataParser {
         String dateString = dateFormat.format(date);
         Scanner scanner = new Scanner(request.toString());
         String line;
+        System.out.println(request);
         while (!(line = scanner.nextLine()).isEmpty()) {
             if (count == 0) {
                 parsingData.setPath(line.split(" ")[1]);
@@ -43,10 +44,10 @@ public class DataParser {
                 if (parsingData.getPath().contains("?")) {
                     checkParamList();
                 }
-
                 count++;
                 continue;
             }
+
             body.putHeaders(line.split(":")[0], line.split(":")[1]);
         }
         while (scanner.hasNextLine()) {
