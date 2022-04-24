@@ -63,7 +63,7 @@ public class DataParser {
     private void bodyParser(Scanner scanner, String contentType) throws JsonProcessingException {
         String line;
         if ((contentType != null) && contentType.contains("multipart/form-data")) {
-            this.body.putFiles("upload", makeResponse.makeFileData(scanner));
+            this.body.putFiles("upload", makeResponse.makeFileData(scanner, contentType.split("boundary=")[1]));
         } else {
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();

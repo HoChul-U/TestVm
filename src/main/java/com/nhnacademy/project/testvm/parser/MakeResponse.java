@@ -41,13 +41,17 @@ public class MakeResponse {
         return jsonString;
     }
 
-    public String makeFileData(Scanner scanner) {
+    public String makeFileData(Scanner scanner, String boundaryData) {
+        String tmp;
         while (scanner.hasNextLine()) {
-            line += scanner.nextLine() + System.lineSeparator();
+            tmp = scanner.nextLine();
+            if (tmp.contains(boundaryData)) {
+                continue;
+            }
+            line += tmp + System.lineSeparator();
         }
         return line
-            .split("\r\n\r\n")[1]
-            .split("-")[0];
+            .substring(line.indexOf("\r\n\r\n")+4,line.length()-4);
     }
 
     public int getContentLength() {
